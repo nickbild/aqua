@@ -31,6 +31,9 @@
 #define CE 6
 // END: SRAM Pin Mappings
 
+#define BUTTON 8
+#define BUS_CONNECT 12
+
 File myFile;
 int index = 0;
 char stringArray[20];
@@ -72,39 +75,51 @@ void setup() {
   pinMode(CE, OUTPUT);
   pinMode(OE, OUTPUT);
 
+  pinMode(BUTTON, INPUT);
+  pinMode(BUS_CONNECT, OUTPUT);
+
   digitalWrite(WE, HIGH);
   digitalWrite(CE, LOW);
   digitalWrite(OE, HIGH);
 }
 
 void loop() {
-  myFile = SD.open("data.txt");
-
-  int next;
-
-  if (myFile) { 
-    while ((next = myFile.read()) != -1) {
-        char nextChar = (char) next;
-        
-        if (nextChar == '\n') {
-            stringArray[index] = '\0';
-
-            // One complete line of the data file is ready at this point.
-            writeByteToRam(atoi(stringArray));
-            readByteFromRam();
-            addr += 1;
-            
-            index = 0;
-        } else {
-            stringArray[index] = nextChar;
-            index += 1;
-        }
+  if (digitalRead(BUTTON) == LOW) {
+    digitalWrite(BUS_CONNECT, LOW);  // Take SRAM off Aquarius bus.
+    prepareBusDisconnect();
+    
+    myFile = SD.open("data.txt");
+  
+    int next;
+  
+    if (myFile) { 
+      while ((next = myFile.read()) != -1) {
+          char nextChar = (char) next;
+          
+          if (nextChar == '\n') {
+              stringArray[index] = '\0';
+  
+              // One complete line of the data file is ready at this point.
+              writeByteToRam(atoi(stringArray));
+              readByteFromRam();
+              addr += 1;
+              
+              index = 0;
+          } else {
+              stringArray[index] = nextChar;
+              index += 1;
+          }
+      }
+  
+      myFile.close();
     }
 
-    myFile.close();
+    prepareBusConnect();
+    digitalWrite(BUS_CONNECT, HIGH);  // Put SRAM back on Aquarius bus.
+
+    delay(2000); // Prevent button bounce.
   }
 
-  delay(500000);
 }
 
 void writeByteToRam(int data) {
@@ -195,4 +210,64 @@ void readByteFromRam() {
   pinMode(DATA5, OUTPUT);
   pinMode(DATA6, OUTPUT);
   pinMode(DATA7, OUTPUT);
+}
+
+void prepareBusConnect() {
+  pinMode(AD0, INPUT);
+  pinMode(AD1, INPUT);
+  pinMode(AD2, INPUT);
+  pinMode(AD3, INPUT);
+  pinMode(AD4, INPUT);
+  pinMode(AD5, INPUT);
+  pinMode(AD6, INPUT);
+  pinMode(AD7, INPUT);
+  pinMode(AD8, INPUT);
+  pinMode(AD9, INPUT);
+  pinMode(AD10, INPUT);
+  pinMode(AD11, INPUT);
+  pinMode(AD12, INPUT);
+  pinMode(AD13, INPUT);
+  pinMode(AD14, INPUT);
+
+  pinMode(DATA0, INPUT);
+  pinMode(DATA1, INPUT);
+  pinMode(DATA2, INPUT);
+  pinMode(DATA3, INPUT);
+  pinMode(DATA4, INPUT);
+  pinMode(DATA5, INPUT);
+  pinMode(DATA6, INPUT);
+  pinMode(DATA7, INPUT);
+
+  pinMode(WE, INPUT);
+  pinMode(OE, INPUT);
+}
+
+void prepareBusDisconnect() {
+  pinMode(AD0, OUTPUT);
+  pinMode(AD1, OUTPUT);
+  pinMode(AD2, OUTPUT);
+  pinMode(AD3, OUTPUT);
+  pinMode(AD4, OUTPUT);
+  pinMode(AD5, OUTPUT);
+  pinMode(AD6, OUTPUT);
+  pinMode(AD7, OUTPUT);
+  pinMode(AD8, OUTPUT);
+  pinMode(AD9, OUTPUT);
+  pinMode(AD10, OUTPUT);
+  pinMode(AD11, OUTPUT);
+  pinMode(AD12, OUTPUT);
+  pinMode(AD13, OUTPUT);
+  pinMode(AD14, OUTPUT);
+
+  pinMode(DATA0, OUTPUT);
+  pinMode(DATA1, OUTPUT);
+  pinMode(DATA2, OUTPUT);
+  pinMode(DATA3, OUTPUT);
+  pinMode(DATA4, OUTPUT);
+  pinMode(DATA5, OUTPUT);
+  pinMode(DATA6, OUTPUT);
+  pinMode(DATA7, OUTPUT);
+
+  pinMode(WE, OUTPUT);
+  pinMode(OE, OUTPUT);
 }

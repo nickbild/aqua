@@ -144,6 +144,9 @@ void writeByteToRam(int data) {
   digitalWrite(WE, HIGH);
   digitalWrite(CE, HIGH);
   delay(1);
+
+  Serial.print("Byte written: ");
+  Serial.println(data);
 }
 
 void readByteFromRam() {
@@ -181,13 +184,14 @@ void readByteFromRam() {
 
   String temp = String(digitalRead(DATA7)) + String(digitalRead(DATA6)) + String(digitalRead(DATA5)) + String(digitalRead(DATA4)) + String(digitalRead(DATA3)) + String(digitalRead(DATA2)) + String(digitalRead(DATA1)) + String(digitalRead(DATA0));
   int temp_i = strtol( temp.c_str(), NULL, 2 );
-  Serial.print("Byte read: ");
-  Serial.println(temp_i);
-
+  
   delay(1);
   digitalWrite(OE, HIGH);
   digitalWrite(CE, HIGH);
   delay(1);
+
+  Serial.print("Byte read: ");
+  Serial.println(temp_i);
 
   pinMode(DATA0, OUTPUT);
   pinMode(DATA1, OUTPUT);

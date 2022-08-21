@@ -73,7 +73,7 @@ void setup() {
   pinMode(OE, OUTPUT);
 
   digitalWrite(WE, HIGH);
-  digitalWrite(CE, HIGH);
+  digitalWrite(CE, LOW);
   digitalWrite(OE, HIGH);
 }
 
@@ -135,14 +135,11 @@ void writeByteToRam(int data) {
   digitalWrite(DATA7, bitRead(data, 7));
 
   delay(1);
-  digitalWrite(CE, LOW);
-  delay(1);
 
   digitalWrite(WE, LOW);
   delay(1);
   
   digitalWrite(WE, HIGH);
-  digitalWrite(CE, HIGH);
   delay(1);
 
   Serial.print("Byte written: ");
@@ -176,8 +173,6 @@ void readByteFromRam() {
   pinMode(DATA7, INPUT);
 
   delay(1);
-  digitalWrite(CE, LOW);
-  delay(1);
 
   digitalWrite(OE, LOW);
   delay(1);
@@ -187,7 +182,6 @@ void readByteFromRam() {
   
   delay(1);
   digitalWrite(OE, HIGH);
-  digitalWrite(CE, HIGH);
   delay(1);
 
   Serial.print("Byte read: ");

@@ -46,41 +46,14 @@ void setup() {
 
   Serial.begin(9600);
 
-  pinMode(AD0, OUTPUT);
-  pinMode(AD1, OUTPUT);
-  pinMode(AD2, OUTPUT);
-  pinMode(AD3, OUTPUT);
-  pinMode(AD4, OUTPUT);
-  pinMode(AD5, OUTPUT);
-  pinMode(AD6, OUTPUT);
-  pinMode(AD7, OUTPUT);
-  pinMode(AD8, OUTPUT);
-  pinMode(AD9, OUTPUT);
-  pinMode(AD10, OUTPUT);
-  pinMode(AD11, OUTPUT);
-  pinMode(AD12, OUTPUT);
-  pinMode(AD13, OUTPUT);
-  pinMode(AD14, OUTPUT);
-
-  pinMode(DATA0, OUTPUT);
-  pinMode(DATA1, OUTPUT);
-  pinMode(DATA2, OUTPUT);
-  pinMode(DATA3, OUTPUT);
-  pinMode(DATA4, OUTPUT);
-  pinMode(DATA5, OUTPUT);
-  pinMode(DATA6, OUTPUT);
-  pinMode(DATA7, OUTPUT);
-
-  pinMode(WE, OUTPUT);
+  prepareBusConnect();
+  
   pinMode(CE, OUTPUT);
-  pinMode(OE, OUTPUT);
-
   pinMode(BUTTON, INPUT);
   pinMode(BUS_CONNECT, OUTPUT);
 
-  digitalWrite(WE, HIGH);
   digitalWrite(CE, LOW);
-  digitalWrite(OE, HIGH);
+  digitalWrite(BUS_CONNECT, HIGH);  // Put SRAM on Aquarius bus.
 }
 
 void loop() {
@@ -270,4 +243,7 @@ void prepareBusDisconnect() {
 
   pinMode(WE, OUTPUT);
   pinMode(OE, OUTPUT);
+
+  digitalWrite(WE, HIGH);
+  digitalWrite(OE, HIGH);
 }

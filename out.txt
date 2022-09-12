@@ -1,0 +1,46 @@
+
+SB-Cross Assembler version 3.03.06
+Please visit www.sbprojects.net for a complete description.
+
+Assembling....
+
+Pass one
+Loaded z80 overlay version 3.01.02
+
+Pass two
+0000-                  1       ; Nick Bild
+0000-                  2       ; September 2022
+0000-                  3       ; Transfer a block of memory from one location to another.
+0000-                  4
+0000-                  5               .cr     z80
+0000-                  6
+0000-                  7           ; Starting address of this loader.
+C000-                  8           .org 49152
+C000-                  9
+C000-                 10           ; Load initial from and to addresses.
+C000-                 11           ; from = 49152 + 18 (size of this loader)
+C000-21 12 C0         12 ( 10)         ld hl,49170
+C003-01 00 40         13 ( 10)         ld bc,16384
+C006-                 14
+C006-                 15           ; Initialize loop.
+C006-                 16           ; This is the number of sequential bytes to copy.
+C006-                 17           ; 1024 (DP RAM size) - 18 (size of this loader)
+C006-11 EE 03         18 ( 10)     ld de,1006
+C009-                 19       LOOP1:
+C009-                 20
+C009-                 21           ; Copy data at from address to destination address, via A.
+C009-7E               22 (  7)     ld a,(hl)
+C00A-02               23 (  7)     ld (bc),a
+C00B-                 24
+C00B-                 25           ; Move to the next address pair.
+C00B-23               26 (  6)     inc hl
+C00C-03               27 (  6)     inc bc
+C00D-                 28
+C00D-1B               29 (  6)     dec de
+C00E-C2 09 C0         30 ( 10)     jp nz,LOOP1
+C011-                 31
+C011-C9               32 ( 10)         ret
+
+0 Errors found during assembly.
+0 Warnings found during assembly.
+

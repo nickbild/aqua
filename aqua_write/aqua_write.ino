@@ -164,7 +164,8 @@ void writeByteToRam(int data) {
 // This allows multiple pages of 1024 bytes (minus loader size) to be copied in to memory for larger programs.
 void writeLoader(int pageNum) {
   // TODO:
-  //data=[]
+  //data=[33, 18, 192, 1, 0, 64, 17, 238, 3, 126, 2, 35, 3, 27, 194, 9, 192, 201]
+  // 0, 64 is location to write to.  Increment by 1006 on each page.
   //writeByteToRam(data);
   //addr += 1;
 }

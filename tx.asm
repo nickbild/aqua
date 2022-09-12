@@ -5,15 +5,17 @@
 	.cr     z80
 
     ; Starting address of this loader.
-    .org 21000
+    .org 49152
 
     ; Load initial from and to addresses.
-	ld hl,20000
+    ; from = 49152 + 18 (size of this loader)
+	ld hl,49170
 	ld bc,16384
 
     ; Initialize loop.
     ; This is the number of sequential bytes to copy.
-    ld e,#10
+    ; 1024 (DP RAM size) - 18 (size of this loader)
+    ld de,1006
 LOOP1:
 
     ; Copy data at from address to destination address, via A.
@@ -24,7 +26,7 @@ LOOP1:
     inc hl
     inc bc
 
-    dec e
+    dec de
     jp nz,LOOP1
 
 	ret

@@ -100,6 +100,7 @@ void loop() {
               // One page complete.
               if (addr == 1024) {
                 Serial.println("Page loaded. Transfer to RAM, then press button to continue.");
+                printRamTransferInstructions();
                 while (digitalRead(BUTTON) == HIGH) {}
                 
                 Serial.println("Continuing data load...");
@@ -118,6 +119,7 @@ void loop() {
     }
 
     Serial.println("All SD data loaded. Transfer it to RAM.");
+    printRamTransferInstructions();
 
     delay(2000); // Prevent button bounce.
   }
@@ -161,11 +163,26 @@ void writeByteToRam(int data) {
 
 // The loader is machine code that sits at the start of the dual-port RAM chip
 // memory and is used to copy the remainder of the contents to the correct SRAM location.
-// This allows multiple pages of 1024 bytes (minus loader size) to be copied in to memory for larger programs.
+// This allows multiple pages of 1006 bytes (1024 minus loader size) to be copied in to memory for larger programs.
 void writeLoader(int pageNum) {
-  // TODO:
-  //data=[33, 18, 192, 1, 0, 64, 17, 238, 3, 126, 2, 35, 3, 27, 194, 9, 192, 201]
-  // 0, 64 is location to write to.  Increment by 1006 on each page.
-  //writeByteToRam(data);
-  //addr += 1;
+  uint8_t loader [] = {33, 18, 192, 1, 0, 64, 17, 238, 3, 126, 2, 35, 3, 27, 194, 9, 192, 201};
+
+  // If this isn't the first page of data to load, adjust the address we are loading to (add 1006).
+  if (pageNum > 0) {
+    int startLoc = 16384 + (1006 * pageNum);
+    loader[4] = startLoc % 256;         // Low byte.
+    loader[5] = int(startLoc / 256);    // High byte.
+  }
+
+  for (uint8_t val : loader) {
+    writeByteToRam(val);
+    addr += 1;
+  }
+}
+
+void printRamTransferInstructions() {
+  Serial.println("To load data to RAM:");
+  Serial.println("poke 14341,192");
+  Serial.println("poke 14340,0");
+  Serial.println("print usr(0)");
 }

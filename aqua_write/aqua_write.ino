@@ -165,9 +165,10 @@ void writeByteToRam(int data) {
 // memory and is used to copy the remainder of the contents to the correct SRAM location.
 // This allows multiple pages of 1006 bytes (1024 minus loader size) to be copied in to memory for larger programs.
 void writeLoader(int pageNum) {
+  // Z80 machine code for the loader.
   uint8_t loader [] = {33, 18, 192, 1, 0, 64, 17, 238, 3, 126, 2, 35, 3, 27, 194, 9, 192, 201};
 
-  // If this isn't the first page of data to load, adjust the address we are loading to (add 1006).
+  // If this isn't the first page of data to load, adjust the address we are loading to (add 1006 per additional page).
   if (pageNum > 0) {
     int startLoc = 16384 + (1006 * pageNum);
     loader[4] = startLoc % 256;         // Low byte.

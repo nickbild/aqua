@@ -10,6 +10,12 @@ The Mattel Aquarius home computer was released in June of 1983 and had already b
 
 ## Media
 
+![](https://raw.githubusercontent.com/nickbild/aqua/main/media/aqua_pcb_sm.jpg)
+
+![](https://raw.githubusercontent.com/nickbild/aqua/main/media/aqua_pcb_inserted_sm.jpg)
+
+![](https://raw.githubusercontent.com/nickbild/aqua/main/media/aqua_pcb_inserted_zoom_out_sm.jpg)
+
 ## Bill of Materials
 
 ## About the Author

@@ -18,7 +18,7 @@ The Aqua board, which adds 32 KB of SRAM and breaks the cartridge port connector
 
 ![](https://raw.githubusercontent.com/nickbild/aqua/main/media/aqua_pcb_inserted_zoom_out_sm.jpg)
 
-AquaWrite, which allows loading data from an SD card to Aquarius RAM:
+AquaWrite, which enables loading data from an SD card to Aquarius RAM:
 
 ![](https://raw.githubusercontent.com/nickbild/aqua/main/media/aqua_write_sm.jpg)
 

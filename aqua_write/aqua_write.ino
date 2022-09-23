@@ -31,7 +31,7 @@
 #define BUTTON 7
 
 File myFile;
-int index = 0;
+int idx = 0;
 char stringArray[10];
 int addr = 0;
 
@@ -67,6 +67,8 @@ void setup() {
   pinMode(BUTTON, INPUT);
     
   Serial.begin(9600);
+
+  printSwLockDisableInstructions();
 }
 
 void loop() {  
@@ -89,13 +91,14 @@ void loop() {
           char nextChar = (char) next;
           
           if (nextChar == '\n') {
-              stringArray[index] = '\0';
+              stringArray[idx] = '\0';
   
               // One complete line of the data file is ready at this point.
               writeByteToRam(atoi(stringArray));
+              readByteFromRam();
               addr += 1;
               
-              index = 0;
+              idx = 0;
 
               // One page complete.
               if (addr == 1024) {
@@ -110,8 +113,8 @@ void loop() {
               }
               
           } else {
-              stringArray[index] = nextChar;
-              index += 1;
+              stringArray[idx] = nextChar;
+              idx += 1;
           }
       }
   
@@ -161,29 +164,102 @@ void writeByteToRam(int data) {
   Serial.println(addr);
 }
 
+void readByteFromRam() {
+  // Set address and data.
+  digitalWrite(AD0_0, bitRead(addr, 0));
+  digitalWrite(AD1_0, bitRead(addr, 1));
+  digitalWrite(AD2_0, bitRead(addr, 2));
+  digitalWrite(AD3_0, bitRead(addr, 3));
+  digitalWrite(AD4_0, bitRead(addr, 4));
+  digitalWrite(AD5_0, bitRead(addr, 5));
+  digitalWrite(AD6_0, bitRead(addr, 6));
+  digitalWrite(AD7_0, bitRead(addr, 7));
+  digitalWrite(AD8_0, bitRead(addr, 8));
+  digitalWrite(AD9_0, bitRead(addr, 9));
+
+  pinMode(DATA0_0, INPUT);
+  pinMode(DATA1_0, INPUT);
+  pinMode(DATA2_0, INPUT);
+  pinMode(DATA3_0, INPUT);
+  pinMode(DATA4_0, INPUT);
+  pinMode(DATA5_0, INPUT);
+  pinMode(DATA6_0, INPUT);
+  pinMode(DATA7_0, INPUT);
+
+  delay(1);
+  digitalWrite(CE_0, LOW);
+  digitalWrite(OE_0, LOW);
+  delay(1);
+
+  String temp = String(digitalRead(DATA7_0)) + String(digitalRead(DATA6_0)) + String(digitalRead(DATA5_0)) + String(digitalRead(DATA4_0)) + String(digitalRead(DATA3_0)) + String(digitalRead(DATA2_0)) + String(digitalRead(DATA1_0)) + String(digitalRead(DATA0_0));
+  int temp_i = strtol( temp.c_str(), NULL, 2 );
+  Serial.print("Byte read:\t");
+  Serial.println(temp_i);
+  
+  digitalWrite(OE_0, HIGH);
+  digitalWrite(CE_0, HIGH);
+  delay(1);
+
+  pinMode(DATA0_0, OUTPUT);
+  pinMode(DATA1_0, OUTPUT);
+  pinMode(DATA2_0, OUTPUT);
+  pinMode(DATA3_0, OUTPUT);
+  pinMode(DATA4_0, OUTPUT);
+  pinMode(DATA5_0, OUTPUT);
+  pinMode(DATA6_0, OUTPUT);
+  pinMode(DATA7_0, OUTPUT);
+}
+
 // The loader is machine code that sits at the start of the dual-port RAM chip
 // memory and is used to copy the remainder of the contents to the correct SRAM location.
-// This allows multiple pages of 1006 bytes (1024 minus loader size) to be copied in to memory for larger programs.
+// This allows multiple pages of 1004 bytes (1024 minus loader size) to be copied in to memory for larger programs.
 void writeLoader(int pageNum) {
   // Z80 machine code for the loader.
-  uint8_t loader [] = {33, 18, 192, 1, 0, 64, 17, 238, 3, 126, 2, 35, 3, 27, 194, 9, 192, 201};
+  uint8_t loader [] = {33, 20, 252, 1, 0, 64, 17, 238, 3, 126, 2, 35, 3, 27, 122, 179, 194, 9, 252, 201};
 
-  // If this isn't the first page of data to load, adjust the address we are loading to (add 1006 per additional page).
+  // If this isn't the first page of data to load, adjust the address we are loading to (add 1004 per additional page).
   if (pageNum > 0) {
-    int startLoc = 16384 + (1006 * pageNum);
+    int startLoc = 16384 + (1004 * pageNum);
     loader[4] = startLoc % 256;         // Low byte.
     loader[5] = int(startLoc / 256);    // High byte.
   }
 
   for (uint8_t val : loader) {
     writeByteToRam(val);
+    readByteFromRam();
     addr += 1;
   }
 }
 
 void printRamTransferInstructions() {
   Serial.println("To load data to RAM:");
-  Serial.println("poke 14341,192");
+  Serial.println("poke 14341,252");
   Serial.println("poke 14340,0");
-  Serial.println("print usr(0)");
+  Serial.println("x=usr(0)");
+}
+
+void printSwLockDisableInstructions() {
+  Serial.println("Before starting, disable the Aquarius software lock:");
+
+  Serial.println("poke 14510,63");
+  Serial.println("poke 14412,63");
+  Serial.println("poke 14530,63");
+
+  Serial.println("10 print 1");
+  Serial.println("run");
+
+  Serial.println("poke 15250,175");
+  Serial.println("poke 15251,211");
+  Serial.println("poke 15252,255");
+  Serial.println("poke 15253,201");
+
+  Serial.println("poke 14341,59");
+  Serial.println("poke 14340,146");
+  Serial.println("x=usr(0)");
+
+  Serial.println("poke 14510,191");
+  Serial.println("poke 14412,191");
+  Serial.println("poke 14530,191");
+
+  Serial.println("run");
 }

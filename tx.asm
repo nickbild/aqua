@@ -5,11 +5,11 @@
 	.cr     z80
 
     ; Starting address of this loader.
-    .org 49152
+    .org 64512
 
     ; Load initial from and to addresses.
-    ; from = 49152 + 18 (size of this loader)
-	ld hl,49170
+    ; from = 64512 + 20 (size of this loader)
+	ld hl,64532
 	ld bc,16384
 
     ; Initialize loop.
@@ -27,6 +27,8 @@ LOOP1:
     inc bc
 
     dec de
+    ld a,d
+    or e
     jp nz,LOOP1
 
 	ret

@@ -10,11 +10,15 @@ The Mattel Aquarius home computer was released in June of 1983 and had already b
 
 ## Media
 
+The Aqua board, which adds 32 KB of SRAM and breaks the cartridge port connectors out into a pin header for easy access:
+
 ![](https://raw.githubusercontent.com/nickbild/aqua/main/media/aqua_pcb_sm.jpg)
 
 ![](https://raw.githubusercontent.com/nickbild/aqua/main/media/aqua_pcb_inserted_sm.jpg)
 
 ![](https://raw.githubusercontent.com/nickbild/aqua/main/media/aqua_pcb_inserted_zoom_out_sm.jpg)
+
+AquaWrite, which allows for loading data from an SD card to Aquarius RAM:
 
 ![](https://raw.githubusercontent.com/nickbild/aqua/main/media/aqua_write_sm.jpg)
 

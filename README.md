@@ -60,6 +60,29 @@ AquaWrite, which enables loading data from an SD card to Aquarius RAM:
 
 ## Bill of Materials
 
+Aqua:
+- Aqua PCB ([KiCad files here](https://github.com/nickbild/aqua/tree/main/aqua_pcb))
+- 1 x 32 KB SRAM chip
+- 1 x 74LS00
+- 1 x 74LS86
+- 1 x 74LS04
+- 4 x 0.1 uF ceramic capacitors
+- 1 x 1000 uF electrolytic capacitor
+- 2 x 10mm M3 standoffs
+- 2 x 15mm M3 standoffs
+- 44 x male pin headers
+
+AquaWrite:
+- 1 x CY7C130-55PC 1 KB dual-port SRAM
+- 1 x 74LS682
+- 1 x 74LS32
+- 1 x Arduino Mega 2560
+- 1 x SD card breakout board
+- 1 x 0.1 uF ceramic capacitors
+- 1 x 47 uF electrolytic capacitor
+- 1 x 10K ohm resistor
+- 1 x pushbutton
+
 ## About the Author
 
 [Nick A. Bild, MS](https://nickbild79.firebaseapp.com/#!/)

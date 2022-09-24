@@ -40,7 +40,7 @@ poke 14530,191
 run
 ```
 
-This relocates the stack and other system variables to onboard memory (before the lock code is changed and they get scrambled), then runs a simple program that writes a `0` to the I/O port at $FF that stores the software lock code.  Since data is encoded/decoded by XORing it with the lock code, setting that code to `0` effectively turns it off — the result is always the same as the initial value.
+This (temporarily) relocates the stack and other system variables to onboard memory (before the lock code is changed and they get scrambled), then runs a simple program that writes a `0` to the I/O port at $FF that stores the software lock code.  Since data is encoded/decoded by XORing it with the lock code, setting that code to `0` effectively turns it off — the result is always the same as the initial value.
 
 Aqua:
 ![](https://raw.githubusercontent.com/nickbild/aqua/main/aqua_pcb/breakout_board.svg)

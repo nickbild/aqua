@@ -8,6 +8,40 @@ The Mattel Aquarius home computer was released in June of 1983 and had already b
 
 ## How It Works
 
+The Aqua PCB ([KiCad files here](https://github.com/nickbild/aqua/tree/main/aqua_pcb)) is designed to plug into the cartridge port of the Aquarius.  It has a 32 KB SRAM chip and logic chips to map it into the 32K addresses above onboard memory ($4000-$BFFF).  It also has a pin header that gives easy access to the cartridge port's connectors.  These are quite useful since the computer offers hardly any other options for extension, and the cartridge port offers direct, unbuffered access to the address and data bus, and virtually all other signals on the Z80.
+
+Aqua brings the Aquarius closer to being in the same league as other contemporary computers, but there is still no decent way to load programs onto it — and using the computer's keyboard to type them is a terrible experience.  So I built AquaWrite, which connects to Aqua's pin header, to load programs/data into memory on the Aquarius from an SD card.  Using AquaWrite, it is possible to write and assemble programs on a modern computer, then write the machine code, as a sequence of newline-delimited bytes, to a text file.  That card can be inserted into AquaWrite and loaded into memory in a few seconds.
+
+AquaWrite uses an Arduino Mega 2560 to handle SD card access and writing that data to a 1 KB dual-port SRAM chip.  That SRAM chip is mapped to from addresses $FC00-$FFFF, and is used to transfer programs of any size into lower memory addresses in 1 KB pages.  The Arduino first writes a small (20 byte) program in machine code to the SRAM, then the next 1,0004 bytes to be transferred.  When ready, the user is prompted to run a `USR` call that executes the machine code and transfers the bytes to a lower memory address.  This is done because the Aquarius prevents access to addresses in the range of this SRAM from BASIC.  If the data to transfer exceeds 1004 bytes, the user presses a button on AquaWrite to load up each additional segment, then again runs `USR` to move the data to the next set of memory addresses.  Any size program (up to the limits of the Aquarius' memory) can be loaded in this way.
+
+This is a bit more complicated because the Aquarius uses an early form of copy protection for external devices (anything that is not onboard the stock computer).  A PLA sits between the Z80 and address bus that XORs addresses with a software lock code (initialized to a random value on startup), which would scramble any values loaded via SD.  So before using AquaWrite for the first time after start up, a sequence of commands need to run to disable this software lock:
+
+```
+poke 14510,63
+poke 14412,63
+poke 14530,63
+
+10 print 1
+run
+
+poke 15250,175
+poke 15251,211
+poke 15252,255
+poke 15253,201
+
+poke 14341,59
+poke 14340,146
+x=usr(0)
+
+poke 14510,191
+poke 14412,191
+poke 14530,191
+
+run
+```
+
+This relocates the stack and other system variables to onboard memory (before the lock code is changed and they get scrambled), then runs a simple program that writes a `0` to the I/O port at $FF that stores the software lock code.  Since data is encoded/decoded by XORing it with the lock code, setting that code to `0` effectively turns it off — the result is always the same as the initial value.
+
 ## Media
 
 The Aqua board, which adds 32 KB of SRAM and breaks the cartridge port connectors out into a pin header for easy access:
